@@ -1,0 +1,7 @@
+# Ignore files
+.DS_Store
+config.py
+
+# Folder
+__pycache__/
+neurosity.egg-info/

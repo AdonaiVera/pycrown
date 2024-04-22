@@ -1,0 +1,2 @@
+firebase-rest-api~=1.10
+openai==1.32.2
