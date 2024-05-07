@@ -6,7 +6,7 @@ import os
 from modules.text_generation import DynamicTextGenerator
 
 class NeurosityReader:
-    def __init__(self, env_file="my.env"):
+    def __init__(self):
         self.neurosity = NeurositySDK({
             "device_id": NEUROSITY_DEVICE_ID
         })
@@ -17,28 +17,16 @@ class NeurosityReader:
         self.running = True
 
         self.text_generator = DynamicTextGenerator()
+        self.threshold = 0.8
+
 
     def callback(self, data):
-        actions = ['Sleep']  # Example actions derived from data
-        speaker_info = "Habla con una voz tranquila y segura"
-        text = self.text_generator.generate_dynamic_text(actions, speaker_info)
-
-        print(text)
-        
-        time.sleep(20)
-        '''
-        
-        # Analyze data and determine if text generation is needed
-        if data['probability'] > threshold:
-            actions = ['Eat', 'Sleep']  # Example actions derived from data
-            speaker_info = "Adonai, with a confident and calm voice"
-            text = generate_dynamic_text(actions, speaker_info)
-            if text is not None:
-                print(text)
-        '''
+        prediction_calm = int(data["probability"] * 100)
+        self.text_generator.generate_dynamic_text(prediction_calm)
 
     def read_brainwaves(self):
-        unsubscribe = self.neurosity.brainwaves_raw(self.callback)
+        #unsubscribe = self.neurosity.kinesis_predictions("push", self.callback)
+        unsubscribe = self.neurosity.calm(self.callback)
         try:
             while self.running:
                 time.sleep(1)  # Sleep to prevent this loop from consuming too much CPU

@@ -1,26 +1,25 @@
 from neurosity import NeurositySDK
-from dotenv import load_dotenv
+from config import NEUROSITY_DEVICE_ID, NEUROSITY_EMAIL, NEUROSITY_PASSWORD
 import os
 import time
 
-load_dotenv("my.env")
 
 device_id = os.getenv("NEUROSITY_DEVICE_ID")
 neurosity = NeurositySDK({
-    "device_id": device_id
+    "device_id": NEUROSITY_DEVICE_ID
 })
 
 neurosity.login({
-    "email": os.getenv("NEUROSITY_EMAIL"),
-    "password": os.getenv("NEUROSITY_PASSWORD")
+    "email": NEUROSITY_EMAIL,
+    "password": NEUROSITY_PASSWORD
 })
 
 info = neurosity.get_info()
 
 def callback(data):
-    print(data)
+    pass
 
-unsubscribe = neurosity.kinesis("leftArm", callback)
+unsubscribe = neurosity.kinesis_predictions("push", callback)
 
 time.sleep(20)
 unsubscribe()

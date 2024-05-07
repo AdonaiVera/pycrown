@@ -121,6 +121,7 @@ class NeurositySDK:
     def stream_metric(self, callback, metric, label, atomic):
         subscription_id = self.add_subscription(metric, label, atomic)
 
+        
         if (atomic):
             metric_path = f"metrics/{metric}"
         else:
