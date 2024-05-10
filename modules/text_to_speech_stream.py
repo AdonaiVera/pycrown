@@ -14,7 +14,7 @@ class ElevenLabsTextToSpeech:
     def text_to_speech_stream(self, text: str) -> BytesIO:
         # Perform the text-to-speech conversion with specified voice and settings
         response = self.client.text_to_speech.convert(
-            voice_id="S7CvMaT6vFHS1IX9j1vP", 
+            voice_id="TfizKtwJkGYwVpygTaPJ", 
             optimize_streaming_latency="0",
             output_format="mp3_22050_32",
             text=text,

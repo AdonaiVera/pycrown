@@ -16,7 +16,6 @@ class DynamicTextGenerator:
         self.previous_relaxation = 0
         self.text_speech = ElevenLabsTextToSpeech()
 
-
     def construct_prompt(self, context):
         # Include recent interactions to maintain context and avoid repetition.
         history_snippet = " ".join(self.session_history[-5:])  # Last 5 interactions to maintain relevance without overload.
@@ -84,31 +83,11 @@ class DynamicTextGenerator:
 
             self.session_history.append(response.choices[0].message.content)
 
-            self.text_speech.text_to_speech_stream(response.choices[0].message.content)
-        except Exception as e:
-            print(f"Failed to generate text: {e}")
-
-
-    def generate_dynamic_text_(self, actions, context_embedding):
-        # Constructing a context-rich prompt
-        context = f"{context_embedding}, si tu fueras una persona como yo y tuvieras que decir que quieres hacer esa acción como lo dirias: solo di la oración {', '.join(actions)}?"
-        try:
-            # Direct API call to generate text with contextual setup
-            response = self.client.chat.completions.create(
-                model="gpt-4",  
-                messages=[
-                    {
-                        "role": "user",
-                        "content": context,
-                    }
-                ],
-                max_tokens=150,
-                temperature=0.5,
-                stop=None,
-            )
-
+            
             return response.choices[0].message.content
         except Exception as e:
             print(f"Failed to generate text: {e}")
-            return None
-        
+            return ""
+
+    def play_dynamic_text(self, text):
+        self.text_speech.text_to_speech_stream(text)

@@ -1,10 +1,4 @@
-import threading
 from modules.read_waves import NeurosityReader
-
-
-import time
-
-threshold = 0.8
 
 def main():
     reader = NeurosityReader()
