@@ -1,13 +1,11 @@
-import threading
+# Import the NeurosityReader class from the modules.read_waves module
 from modules.read_waves import NeurosityReader
 
-
-import time
-
-threshold = 0.8
-
 def main():
+    # Create an instance of NeurosityReader
     reader = NeurosityReader()
+    
+    # Start the reader to begin processing EEG data
     reader.start()
 
     try:
