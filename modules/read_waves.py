@@ -5,6 +5,7 @@ import os
 from neurosity import NeurositySDK
 from config import NEUROSITY_DEVICE_ID, NEUROSITY_EMAIL, NEUROSITY_PASSWORD
 from modules.text_generation import DynamicTextGenerator
+from pipeline.inference import MeditationClassifier
 
 # Check if the dashing library is installed and handle the ImportError
 try:
@@ -34,17 +35,20 @@ class NeurosityReader:
         # Initialize text generator and threading lock for text generation
         self.text_generator = DynamicTextGenerator()
         self.text_generation_lock = threading.Lock()
-        self.threshold = 0.8  # Threshold value for calm detection
+        
+        # Load the trained meditation classifier model
+        self.classifier = MeditationClassifier(model_path="model/meditation_classifier.pkl", scaler_path="model/scaler.pkl")
 
         # UI setup and initial greeting
         self.setup_ui()
         self.split_and_append("Hola, soy ALE, tu guía espiritual en este viaje de meditación. ¿Cómo te sientes hoy y qué tipo de meditación te gustaría hacer?")
 
+
     def split_and_append(self, text):
         # Split text into chunks and append to the log UI
         words = text.split()
-        for i in range(0, len(words), 12):  # Break text into chunks of 12 words
-            chunk = ' '.join(words[i:i+12])
+        for i in range(0, len(words), 8):  # Break text into chunks of 12 words
+            chunk = ' '.join(words[i:i+8])
             self.ui.items[0].items[0].items[0].append(chunk)
         self.ui.items[0].items[0].items[0].append("")
 
@@ -53,8 +57,9 @@ class NeurosityReader:
         self.ui = HSplit(
             VSplit(
                 HSplit(
-                    Log(title='ALE', border_color=2, color=4),
-                    VGauge(val=5, title="Meditation", border_color=2, color=3),
+                    Log(title='ALE', border_color=2, color=1),
+                    VGauge(val=5, title="Meditation Crown", border_color=2, color=3),
+                    VGauge(val=5, title="Meditation OWN", border_color=2, color=5),
                 ),
                 HSplit(
                     VGauge(val=0, title="Alpha", border_color=2, color=1),
@@ -68,15 +73,11 @@ class NeurosityReader:
 
     def callback_brainwaves_power_by_band(self, data):
         """Update UI gauges based on brainwave band powers."""
+        self.ui.items[0].items[0].items[2].value = self.classifier.predict_proba(data['data']['alpha'])[1]*100
         for band, values in data['data'].items():
             average_power = round(sum(values) / len(values), 2)
             path = FIELD_PATHS[band]
             self.ui.items[path[0]].items[path[1]].items[path[2]].value = average_power
-
-    def callback_brainwaves_raw(self, data):
-        """Handle raw brainwaves data callback."""
-        for channel_index, channel in enumerate(data['data']):
-            self.ui.items[1].items[channel_index].append(round(sum(channel) / len(channel), 2))
 
     def callback(self, data):
         """Handle callback from calm detection and generate text accordingly."""
@@ -117,4 +118,3 @@ class NeurosityReader:
         """Stop the brainwave reading thread and clean up resources."""
         self.running = False
         self.thread.join()
-

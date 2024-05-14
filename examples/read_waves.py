@@ -1,19 +1,12 @@
 from neurosity import NeurositySDK
-from dotenv import load_dotenv
+from config import NEUROSITY_DEVICE_ID, NEUROSITY_EMAIL, NEUROSITY_PASSWORD
 import os
 import time
 
-load_dotenv()
 
-neurosity = NeurositySDK({
-    "device_id": os.getenv("NEUROSITY_DEVICE_ID")
-})
-
-neurosity.login({
-    "email": os.getenv("NEUROSITY_EMAIL"),
-    "password": os.getenv("NEUROSITY_PASSWORD")
-})
-
+neurosity = NeurositySDK({"device_id": NEUROSITY_DEVICE_ID})
+neurosity.login({"email": NEUROSITY_EMAIL, "password": NEUROSITY_PASSWORD})
+        
 info = neurosity.get_info()
 print(info)
 

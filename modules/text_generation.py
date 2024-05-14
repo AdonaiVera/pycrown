@@ -17,7 +17,7 @@ class DynamicTextGenerator:
         """Constructs a prompt for the GPT model by appending recent interactions."""
         # Combine the last 5 interactions to maintain conversational context without overload.
         history_snippet = " ".join(self.session_history[-5:])
-        return f"{history_snippet} {context} Por favor, continúa con algo nuevo y relevante."
+        return f"{history_snippet} {context} Por favor, continúa con algo nuevo, relevante y conciso"
     
     def initial_interaction(self):
         """Handles the initial user interaction, speaking a greeting and listening for a response."""
