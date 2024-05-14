@@ -69,11 +69,31 @@ class DynamicTextGenerator:
                 max_tokens=100,
                 temperature=0.5
             )
-            self.session_history.append(response.choices[0].message.content)
-            return response.choices[0].message.content
+            initial_output = response.choices[0].message.content
+            
+            # Refine the initial output
+            refined_output = self.refine_text(initial_output)
+            self.session_history.append(refined_output)
+            
+            return refined_output
         except Exception as e:
             print(f"Failed to generate text: {e}")
             return ""
+        
+    def refine_text(self, text):
+        """Refine the text to ensure it's coherent, concise, and complete."""
+        refinement_prompt = f"Por favor refina el siguiente texto, evita que quede frases cortadas: {text}"
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-4",
+                messages=[{"role": "user", "content": refinement_prompt}],
+                max_tokens=100,
+                temperature=0.5
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"Failed to refine text: {e}")
+            return text
 
     def play_dynamic_text(self, text):
         """Play the generated text using text-to-speech."""
